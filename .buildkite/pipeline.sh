@@ -18,14 +18,20 @@ fi
 [[ ${BUILDKITE_BUILD_NUMBER} != "" ]] && TAGS+=" BK${BUILDKITE_BUILD_NUMBER}"
 [[ ${AUTHELIA_RELEASE} != "" ]] && TAGS+=" ${AUTHELIA_RELEASE}"
 
-for REGISTRY in ${REGISTRIES}; do for TAG in ${TAGS}; do BUILDTAGS+="--tag ${REGISTRY}/${REPOSITORY//image}:${TAG} "; done; done
+for REGISTRY in ${REGISTRIES}; do for TAG in ${TAGS}; do BUILDTAGS+="-t ${REGISTRY}/${REPOSITORY//image}:${TAG} "; done; done
 
 cat << EOF
 steps:
   - label: ":docker: Build and Deploy"
     command: "docker build ${BUILDTAGS::-1} --label org.opencontainers.image.source=https://github.com/${REPOSITORY} --platform linux/amd64,linux/arm/v7,linux/arm64 --builder buildx --pull --push ."
+EOF
+if [[ "${BUILDKITE_BRANCH}" == "master" ]]; then
+cat << EOF
     concurrency: 1
     concurrency_group: "baseimage-deployments"
+EOF
+fi
+cat << EOF
     agents:
       upload: "fast"
 
@@ -35,4 +41,5 @@ steps:
     command: "curl \"https://ci.nerv.com.au/readmesync/update?github_repo=${REPOSITORY}&dockerhub_repo=${REPOSITORY//image}\""
     agents:
       upload: "fast"
+    if: build.branch == "master"
 EOF

@@ -7,11 +7,10 @@ ARG TARGETARCH
 WORKDIR /root-fs
 
 RUN \
-    wget -qO - "https://github.com/canonical/chisel/releases/download/v${CHISEL_RELEASE}/chisel_v${CHISEL_RELEASE}_linux_${TARGETARCH}.tar.gz" | tar -xz --no-same-owner -C /usr/local/bin chisel && \
-    git clone -b feat-wget-24.04 https://github.com/nightah/chisel-releases/ /chisel-releases
+    wget -qO - "https://github.com/canonical/chisel/releases/download/v${CHISEL_RELEASE}/chisel_v${CHISEL_RELEASE}_linux_${TARGETARCH}.tar.gz" | tar -xz --no-same-owner -C /usr/local/bin chisel
 
 RUN \
-    chisel cut --release /chisel-releases --root /root-fs \
+    chisel cut --release ubuntu-24.04 --root /root-fs \
     base-files_base base-files_release-info base-passwd_data busybox_bins \
     ca-certificates_data libc-bin_nsswitch tzdata_zoneinfo wget_bins && \
     exec /root-fs/bin/busybox --install /root-fs/bin
