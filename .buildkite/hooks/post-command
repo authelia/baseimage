@@ -2,5 +2,6 @@
 set -u
 
 if [[ "${BUILDKITE_LABEL}" == ":docker: Build and Deploy Image" ]]; then
-  docker logout
+  docker logout docker.io
+  docker logout ghcr.io
 fi
