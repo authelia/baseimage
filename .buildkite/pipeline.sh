@@ -18,7 +18,7 @@ fi
 [[ ${BUILDKITE_BUILD_NUMBER} != "" ]] && TAGS+=" BK${BUILDKITE_BUILD_NUMBER}"
 [[ ${AUTHELIA_RELEASE} != "" ]] && TAGS+=" ${AUTHELIA_RELEASE}"
 
-for REGISTRY in ${REGISTRIES}; do for TAG in ${TAGS}; do BUILDTAGS+="--tag ${REGISTRY}/${REPOSITORY//image}:${TAG} "; done; done
+for REGISTRY in ${REGISTRIES}; do for TAG in ${TAGS}; do BUILDTAGS+="-t ${REGISTRY}/${REPOSITORY//image}:${TAG} "; done; done
 
 cat << EOF
 steps:
@@ -35,4 +35,5 @@ steps:
     command: "curl \"https://ci.nerv.com.au/readmesync/update?github_repo=${REPOSITORY}&dockerhub_repo=${REPOSITORY//image}\""
     agents:
       upload: "fast"
+    if: build.branch == "master"
 EOF
