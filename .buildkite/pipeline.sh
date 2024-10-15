@@ -24,8 +24,14 @@ cat << EOF
 steps:
   - label: ":docker: Build and Deploy"
     command: "docker build ${BUILDTAGS::-1} --label org.opencontainers.image.source=https://github.com/${REPOSITORY} --platform linux/amd64,linux/arm/v7,linux/arm64 --builder buildx --pull --push ."
+EOF
+if [[ "${BUILDKITE_BRANCH}" == "master" ]]; then
+cat << EOF
     concurrency: 1
     concurrency_group: "baseimage-deployments"
+EOF
+fi
+cat << EOF
     agents:
       upload: "fast"
 
