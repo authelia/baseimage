@@ -2,7 +2,7 @@
 on('pull_request.opened')
     .filter(
         context =>
-            context.payload.pull_request.head.label.slice(0, 10) === 'baseimage:'
+            context.payload.pull_request.head.label.slice(0, 9) === 'authelia:'
     )
     .filter(
         context =>
@@ -27,7 +27,7 @@ These changes are published for testing on DockerHub and GitHub Container Regist
 on('pull_request.opened')
     .filter(
         context =>
-            context.payload.pull_request.head.label.slice(0, 10) !== 'baseimage:'
+            context.payload.pull_request.head.label.slice(0, 9) !== 'authelia:'
     )
     .comment(`Thanks for choosing to contribute @{{ pull_request.user.login }}.
 
