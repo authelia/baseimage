@@ -22,4 +22,5 @@ This container includes the bare minimum packages for Authelia to function in a 
 * wget
 
 ## Version
+- **16/10/2024:** Add Provenance and SBOM attestations
 - **15/10/2024:** Initial release
