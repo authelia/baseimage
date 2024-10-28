@@ -16,7 +16,7 @@ RUN \
     exec /root-fs/bin/busybox --install /root-fs/bin
 
 RUN  \
-    wget -qO /root-fs/sbin/su-exec "https://github.com/songdongsheng/su-exec/releases/download/${SUEXEC_RELEASE}/su-exec-glibc-shared" && chmod +x /root-fs/sbin/su-exec
+    wget -qO /root-fs/sbin/su-exec "https://github.com/songdongsheng/su-exec/releases/download/${SUEXEC_RELEASE}/su-exec-musl-static" && chmod +x /root-fs/sbin/su-exec
 
 FROM scratch
 

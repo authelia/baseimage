@@ -22,5 +22,6 @@ This container includes the bare minimum packages for Authelia to function in a 
 * wget
 
 ## Version
+- **28/10/2024:** Swap to musl-static variant of su-exec for multi-arch support
 - **16/10/2024:** Add Provenance and SBOM attestations
 - **15/10/2024:** Initial release
