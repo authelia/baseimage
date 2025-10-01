@@ -9,6 +9,7 @@ ARG TARGETARCH
 WORKDIR /root-fs
 
 RUN <<EOF
+    set -e
     wget -qO - "https://github.com/canonical/chisel/releases/download/v${CHISEL_RELEASE}/chisel_v${CHISEL_RELEASE}_linux_${TARGETARCH}.tar.gz" | tar -xz --no-same-owner -C /usr/local/bin chisel
 
     chisel cut --release ubuntu-24.04 --root /root-fs \
@@ -27,11 +28,10 @@ RUN <<EOF
     done
 
     if [ -f debian/patches/series ]; then \
-        while read p; do \
-            [ -z "$p" ] && continue; \
+        grep -vE '^[[:space:]]*(#|$)' debian/patches/series | while read -r p; do \
             echo "Applying patch: $p"; \
             patch -p1 < "debian/patches/$p"; \
-        done < debian/patches/series; \
+        done; \
     fi
 
     cp debian/config/pkg/deb .config
