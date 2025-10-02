@@ -34,11 +34,12 @@ fi
 cat << EOF
     agents:
       upload: "fast"
-
-  - wait
+    key: "build-docker-linux"
 
   - label: ":docker: Update README.md"
     command: "curl \"https://ci.nerv.com.au/readmesync/update?github_repo=${REPOSITORY}&dockerhub_repo=${REPOSITORY//image}\""
+    depends_on:
+      - "build-docker-linux"
     agents:
       upload: "fast"
     if: build.branch == "master"
