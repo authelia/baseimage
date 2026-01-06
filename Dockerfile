@@ -38,6 +38,9 @@ RUN <<EOF
       echo ${f} >> debian/patches/series
     done
 
+    cp /tmp/patches/busybox/CVE-2025-60876.patch debian/patches/
+    echo "CVE-2025-60876.patch" >> debian/patches/series
+
     if [ -f debian/patches/series ]; then \
         while read p; do \
             [ -z "$p" ] && continue; \
