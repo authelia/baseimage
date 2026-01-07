@@ -24,6 +24,8 @@ ARG TARGETARCH
 
 SHELL ["/bin/bash", "-c"]
 
+COPY --link patches /tmp/patches
+
 RUN <<EOF
     set -euo pipefail
 
@@ -37,6 +39,9 @@ RUN <<EOF
       wget -q -P debian/patches https://raw.githubusercontent.com/wolfi-dev/os/050b3a5b2846b85cb385aa72cabbd457964a42a6/busybox/${f}
       echo ${f} >> debian/patches/series
     done
+
+    cp /tmp/patches/busybox/CVE-2025-60876.patch debian/patches/
+    echo "CVE-2025-60876.patch" >> debian/patches/series
 
     if [ -f debian/patches/series ]; then \
         while read p; do \
