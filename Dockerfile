@@ -24,7 +24,7 @@ ARG TARGETARCH
 
 SHELL ["/bin/bash", "-c"]
 
-COPY patches /tmp/patches
+COPY --link patches /tmp/patches
 
 RUN <<EOF
     set -euo pipefail
