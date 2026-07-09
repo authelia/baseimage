@@ -1,4 +1,4 @@
-FROM buildpack-deps:24.04 AS chisel
+FROM buildpack-deps:26.04 AS chisel
 
 ARG CHISEL_RELEASE="1.4.1"
 ARG SUEXEC_RELEASE="0.3"
@@ -9,7 +9,7 @@ WORKDIR /root-fs
 RUN <<EOF
     wget -qO - "https://github.com/canonical/chisel/releases/download/v${CHISEL_RELEASE}/chisel_v${CHISEL_RELEASE}_linux_${TARGETARCH}.tar.gz" | tar -xz --no-same-owner -C /usr/local/bin chisel
 
-    chisel cut --release ubuntu-24.04 --root /root-fs \
+    chisel cut --release ubuntu-26.04 --root /root-fs \
     base-files_base base-files_release-info base-passwd_data \
     ca-certificates_data libc-bin_nsswitch tzdata_zoneinfo wget_bins && \
 
@@ -64,7 +64,7 @@ RUN <<EOF
     make CONFIG_PREFIX=/root-fs install
 EOF
 
-FROM buildpack-deps:24.04 AS final
+FROM buildpack-deps:26.04 AS final
 
 COPY --link --from=chisel /root-fs /root-fs
 COPY --link --from=crossbuild /root-fs/bin/busybox /root-fs/bin/busybox
