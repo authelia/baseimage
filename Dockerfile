@@ -1,6 +1,6 @@
-FROM buildpack-deps:26.04 AS chisel
+FROM buildpack-deps:24.04 AS chisel
 
-ARG CHISEL_RELEASE="1.4.1"
+ARG CHISEL_RELEASE="1.4.2"
 ARG SUEXEC_RELEASE="0.3"
 ARG TARGETARCH
 
@@ -9,7 +9,7 @@ WORKDIR /root-fs
 RUN <<EOF
     wget -qO - "https://github.com/canonical/chisel/releases/download/v${CHISEL_RELEASE}/chisel_v${CHISEL_RELEASE}_linux_${TARGETARCH}.tar.gz" | tar -xz --no-same-owner -C /usr/local/bin chisel
 
-    chisel cut --release ubuntu-26.04 --root /root-fs \
+    chisel cut --release ubuntu-24.04 --root /root-fs \
     base-files_base base-files_release-info base-passwd_data \
     ca-certificates_data libc-bin_nsswitch tzdata_zoneinfo wget_bins && \
 
@@ -19,7 +19,8 @@ EOF
 FROM --platform=${BUILDPLATFORM} authelia/crossbuild AS crossbuild
 
 ARG BUSYBOX_RELEASE=1.37.0
-ARG BUSYBOX_REV=4
+ARG BUSYBOX_DEBIAN_REV=4
+ARG BUSYBOX_UBUNTU_REV=1
 ARG TARGETARCH
 
 SHELL ["/bin/bash", "-c"]
@@ -31,7 +32,7 @@ RUN <<EOF
 
     cd /tmp
     wget -qO - "https://archive.ubuntu.com/ubuntu/pool/main/b/busybox/busybox_${BUSYBOX_RELEASE}.orig.tar.bz2" | tar -xj
-    wget -qO - "https://archive.ubuntu.com/ubuntu/pool/main/b/busybox/busybox_${BUSYBOX_RELEASE}-${BUSYBOX_REV}ubuntu1.debian.tar.xz" | tar -xJ -C busybox-${BUSYBOX_RELEASE}
+    wget -qO - "https://archive.ubuntu.com/ubuntu/pool/main/b/busybox/busybox_${BUSYBOX_RELEASE}-${BUSYBOX_DEBIAN_REV}ubuntu${BUSYBOX_UBUNTU_REV}.debian.tar.xz" | tar -xJ -C busybox-${BUSYBOX_RELEASE}
 
     cd busybox-${BUSYBOX_RELEASE}
 
