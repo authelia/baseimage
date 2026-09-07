@@ -37,7 +37,7 @@ cat << EOF
     key: "build-docker-linux"
 
   - label: ":grype: Vulnerability Scanning"
-    command: "grype -f low registry:${REPOSITORY}:${TAGS%% *}"
+    command: "grype -f low registry:${REPOSITORY//image}:${TAGS%% *}"
     depends_on:
       - "build-docker-linux"
 
