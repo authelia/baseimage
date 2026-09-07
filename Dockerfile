@@ -1,6 +1,6 @@
 FROM buildpack-deps:24.04 AS chisel
 
-ARG CHISEL_RELEASE="1.4.2"
+ARG CHISEL_RELEASE="1.5.0"
 ARG SUEXEC_RELEASE="0.3"
 ARG TARGETARCH
 
@@ -18,14 +18,12 @@ EOF
 
 FROM --platform=${BUILDPLATFORM} authelia/crossbuild AS crossbuild
 
-ARG BUSYBOX_RELEASE=1.37.0
-ARG BUSYBOX_DEBIAN_REV=4
+ARG BUSYBOX_RELEASE=1.38.0
+ARG BUSYBOX_DEBIAN_REV=3
 ARG BUSYBOX_UBUNTU_REV=1
 ARG TARGETARCH
 
 SHELL ["/bin/bash", "-c"]
-
-COPY --link patches /tmp/patches
 
 RUN <<EOF
     set -euo pipefail
@@ -36,13 +34,12 @@ RUN <<EOF
 
     cd busybox-${BUSYBOX_RELEASE}
 
-    for f in CVE-2024-58251-2.patch CVE-2025-46394.patch; do
-      wget -q -P debian/patches https://raw.githubusercontent.com/wolfi-dev/os/050b3a5b2846b85cb385aa72cabbd457964a42a6/busybox/${f}
-      echo ${f} >> debian/patches/series
-    done
-
-    cp /tmp/patches/busybox/CVE-2025-60876.patch debian/patches/
-    echo "CVE-2025-60876.patch" >> debian/patches/series
+    # NOTE: as of 1.38.0-3ubuntu1, debian/patches/series already ships
+    # netstat-sanitize-argv0-for-p-CVE-2024-58251.patch,
+    # archival-libarchive-sanitize-filenames-on-output-CVE-2025-46394-2.patch and
+    # wget-disallow-control-chars-in-URLs-CVE-2025-60876.patch, so the
+    # previously vendored wolfi-dev/local patches for those CVEs are dropped
+    # here to avoid a doubled/conflicting patch application.
 
     if [ -f debian/patches/series ]; then \
         while read p; do \
