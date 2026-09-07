@@ -1,0 +1,27 @@
+---
+ignore:
+  - vulnerability: CVE-2026-38753
+    package:
+      name: busybox
+      version: 1.38.0
+      type: binary
+    reason: |
+      Explicitly patched in authelia/base. The reported version string is unchanged from upstream busybox 1.38.0
+      so grype still flags it, but the vulnerable code paths have been backported.
+  - vulnerability: CVE-2026-38754
+    package:
+      name: busybox
+      version: 1.38.0
+      type: binary
+    reason: |
+      Explicitly patched in authelia/base. The reported version string is unchanged from upstream busybox 1.38.0
+      so grype still flags it, but the vulnerable code paths have been backported.
+  - vulnerability: CVE-2026-38755
+    package:
+      name: busybox
+      version: 1.38.0
+      type: binary
+    reason: |
+      Explicitly patched in authelia/base. The reported version string is unchanged from upstream busybox 1.38.0
+      so grype still flags it, but the vulnerable code paths have been backported.
+...

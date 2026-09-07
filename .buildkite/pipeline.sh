@@ -36,6 +36,11 @@ cat << EOF
       upload: "fast"
     key: "build-docker-linux"
 
+  - label: ":grype: Vulnerability Scanning"
+    command: "grype -f low registry:${REPOSITORY}:${TAGS%% *}"
+    depends_on:
+      - "build-docker-linux"
+
   - label: ":docker: Update README.md"
     command: "curl \"https://ci.nerv.com.au/readmesync/update?github_repo=${REPOSITORY}&dockerhub_repo=${REPOSITORY//image}\""
     depends_on:

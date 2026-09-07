@@ -34,12 +34,12 @@ RUN <<EOF
 
     cd busybox-${BUSYBOX_RELEASE}
 
-    # NOTE: as of 1.38.0-3ubuntu1, debian/patches/series already ships
-    # netstat-sanitize-argv0-for-p-CVE-2024-58251.patch,
-    # archival-libarchive-sanitize-filenames-on-output-CVE-2025-46394-2.patch and
-    # wget-disallow-control-chars-in-URLs-CVE-2025-60876.patch, so the
-    # previously vendored wolfi-dev/local patches for those CVEs are dropped
-    # here to avoid a doubled/conflicting patch application.
+    # NOTE: as of 1.38.0-3ubuntu1, debian/patches/series already ships fixes
+    # for CVE-2024-58251, CVE-2025-46394, CVE-2025-60876 and (ash/awk)
+    # CVE-2026-38752, CVE-2026-38753, CVE-2026-38754, CVE-2026-38755, all
+    # applied by the generic series loop below. Do not vendor duplicate
+    # copies of these patches from elsewhere - applying an already-applied
+    # hunk a second time makes `patch` fail and breaks this build.
 
     if [ -f debian/patches/series ]; then \
         while read p; do \
