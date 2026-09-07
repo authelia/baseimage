@@ -22,6 +22,7 @@ This container includes the bare minimum packages for Authelia to function in a 
 * wget
 
 ## Version
+- **07/09/2026:** Update busybox and chisel
 - **12/07/2026:** Update chisel
 - **08/04/2026:** Update chisel
 - **06/03/2026:** Update chisel and suexec
