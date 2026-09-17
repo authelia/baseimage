@@ -9,9 +9,17 @@ WORKDIR /root-fs
 RUN <<EOF
     wget -qO - "https://github.com/canonical/chisel/releases/download/v${CHISEL_RELEASE}/chisel_v${CHISEL_RELEASE}_linux_${TARGETARCH}.tar.gz" | tar -xz --no-same-owner -C /usr/local/bin chisel
 
+    # NOTE: on armhf libffi8 links against libgcc_s.so.1 (wget -> gnutls ->
+    # p11-kit -> libffi), but the upstream libffi8_libs slice does not declare
+    # libgcc-s1_libs as essential. Remove once fixed in chisel-releases.
+    ARCH_SLICES=""
+    if [ "${TARGETARCH}" = "arm" ]; then
+      ARCH_SLICES="libgcc-s1_libs"
+    fi
+
     chisel cut --release ubuntu-26.04 --root /root-fs \
     base-files_base base-files_release-info base-passwd_data \
-    ca-certificates_data libc-bin_nsswitch tzdata_zoneinfo wget_bins && \
+    ca-certificates_data libc-bin_nsswitch tzdata_zoneinfo wget_bins ${ARCH_SLICES} && \
 
     wget -qO - "https://github.com/ncopa/su-exec/archive/refs/tags/v${SUEXEC_RELEASE}.tar.gz" | tar -xz -C /tmp && make -C /tmp/su-exec-${SUEXEC_RELEASE} && mv /tmp/su-exec-${SUEXEC_RELEASE}/su-exec /root-fs/sbin/su-exec
 EOF
