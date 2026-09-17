@@ -79,6 +79,43 @@ RUN <<EOF
     /root-fs/bin/busybox --install /root-fs/bin
 EOF
 
+# NOTE: smoke test the assembled rootfs under the target architecture so broken
+# binaries or missing shared libraries fail the build before anything is pushed.
+# Tests run against a throwaway copy so no test artifacts leak into the image, and
+# in an isolated network so parallel per-platform builds do not clash on ports.
+RUN --network=none <<EOF
+    set -eu
+
+    cp -a /root-fs /smoke-test
+    mkdir -p /smoke-test/dev /smoke-test/tmp/www
+    cp -a /dev/null /smoke-test/dev/null
+    echo "ok" > /smoke-test/tmp/www/index.html
+
+    chroot /smoke-test /bin/env -i PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin /bin/ash -eu -c '
+        echo "--- ash"
+        [ "$(command -v sh)" = "/bin/sh" ]
+        [ "$(echo foo | sed s/foo/bar/)" = "bar" ]
+        [ "$((6 * 7))" = "42" ]
+        [ "$(sh -c "echo nested")" = "nested" ]
+
+        echo "--- wget"
+        [ "$(command -v wget)" = "/usr/bin/wget" ]
+        wget --version | head -n 1 | grep -q "^GNU Wget"
+
+        httpd -f -p 127.0.0.1:8080 -h /tmp/www &
+        HTTPD_PID=$!
+        trap "kill ${HTTPD_PID}" EXIT
+        for i in 1 2 3 4 5; do wget -qO /dev/null http://127.0.0.1:8080/ && break; sleep 1; done
+
+        [ "$(wget -qO - http://127.0.0.1:8080/)" = "ok" ]
+        wget --quiet --no-check-certificate --tries=1 --spider http://127.0.0.1:8080/
+
+        echo "--- smoke tests passed"
+    '
+
+    rm -rf /smoke-test
+EOF
+
 FROM scratch
 
 COPY --link --from=final /root-fs /
