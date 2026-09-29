@@ -9,17 +9,9 @@ WORKDIR /root-fs
 RUN <<EOF
     wget -qO - "https://github.com/canonical/chisel/releases/download/v${CHISEL_RELEASE}/chisel_v${CHISEL_RELEASE}_linux_${TARGETARCH}.tar.gz" | tar -xz --no-same-owner -C /usr/local/bin chisel
 
-    # NOTE: on armhf libffi8 links against libgcc_s.so.1 (wget -> gnutls ->
-    # p11-kit -> libffi), but the upstream libffi8_libs slice does not declare
-    # libgcc-s1_libs as essential. Remove once fixed in chisel-releases.
-    ARCH_SLICES=""
-    if [ "${TARGETARCH}" = "arm" ]; then
-      ARCH_SLICES="libgcc-s1_libs"
-    fi
-
     chisel cut --release ubuntu-26.04 --root /root-fs \
     base-files_base base-files_release-info base-passwd_data \
-    ca-certificates_data libc-bin_nsswitch tzdata_zoneinfo wget_bins ${ARCH_SLICES} && \
+    ca-certificates_data libc-bin_nsswitch tzdata_zoneinfo wget_bins && \
 
     wget -qO - "https://github.com/ncopa/su-exec/archive/refs/tags/v${SUEXEC_RELEASE}.tar.gz" | tar -xz -C /tmp && make -C /tmp/su-exec-${SUEXEC_RELEASE} && mv /tmp/su-exec-${SUEXEC_RELEASE}/su-exec /root-fs/sbin/su-exec
 EOF
@@ -28,7 +20,7 @@ FROM --platform=${BUILDPLATFORM} authelia/crossbuild AS crossbuild
 
 ARG BUSYBOX_RELEASE=1.38.0
 ARG BUSYBOX_DEBIAN_REV=3
-ARG BUSYBOX_UBUNTU_REV=1
+ARG BUSYBOX_UBUNTU_REV=4
 ARG TARGETARCH
 
 SHELL ["/bin/bash", "-c"]
@@ -42,7 +34,7 @@ RUN <<EOF
 
     cd busybox-${BUSYBOX_RELEASE}
 
-    # NOTE: as of 1.38.0-3ubuntu1, debian/patches/series already ships fixes
+    # NOTE: as of 1.38.0-3ubuntu4, debian/patches/series already ships fixes
     # for CVE-2024-58251, CVE-2025-46394, CVE-2025-60876 and (ash/awk)
     # CVE-2026-38752, CVE-2026-38753, CVE-2026-38754, CVE-2026-38755, all
     # applied by the generic series loop below. Do not vendor duplicate
