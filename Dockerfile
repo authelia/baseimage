@@ -18,9 +18,7 @@ EOF
 
 FROM --platform=${BUILDPLATFORM} authelia/crossbuild AS crossbuild
 
-ARG BUSYBOX_RELEASE=1.38.0
-ARG BUSYBOX_DEBIAN_REV=3
-ARG BUSYBOX_UBUNTU_REV=4
+ARG BUSYBOX_VERSION=1.38.0-3ubuntu3
 ARG TARGETARCH
 
 SHELL ["/bin/bash", "-c"]
@@ -28,18 +26,13 @@ SHELL ["/bin/bash", "-c"]
 RUN <<EOF
     set -euo pipefail
 
+    BUSYBOX_RELEASE="${BUSYBOX_VERSION%%-*}"
+
     cd /tmp
     wget -qO - "https://archive.ubuntu.com/ubuntu/pool/main/b/busybox/busybox_${BUSYBOX_RELEASE}.orig.tar.bz2" | tar -xj
-    wget -qO - "https://archive.ubuntu.com/ubuntu/pool/main/b/busybox/busybox_${BUSYBOX_RELEASE}-${BUSYBOX_DEBIAN_REV}ubuntu${BUSYBOX_UBUNTU_REV}.debian.tar.xz" | tar -xJ -C busybox-${BUSYBOX_RELEASE}
+    wget -qO - "https://archive.ubuntu.com/ubuntu/pool/main/b/busybox/busybox_${BUSYBOX_VERSION}.debian.tar.xz" | tar -xJ -C busybox-${BUSYBOX_RELEASE}
 
     cd busybox-${BUSYBOX_RELEASE}
-
-    # NOTE: as of 1.38.0-3ubuntu4, debian/patches/series already ships fixes
-    # for CVE-2024-58251, CVE-2025-46394, CVE-2025-60876 and (ash/awk)
-    # CVE-2026-38752, CVE-2026-38753, CVE-2026-38754, CVE-2026-38755, all
-    # applied by the generic series loop below. Do not vendor duplicate
-    # copies of these patches from elsewhere - applying an already-applied
-    # hunk a second time makes `patch` fail and breaks this build.
 
     if [ -f debian/patches/series ]; then \
         while read p; do \
@@ -71,10 +64,6 @@ RUN <<EOF
     /root-fs/bin/busybox --install /root-fs/bin
 EOF
 
-# NOTE: smoke test the assembled rootfs under the target architecture so broken
-# binaries or missing shared libraries fail the build before anything is pushed.
-# Tests run against a throwaway copy so no test artifacts leak into the image, and
-# in an isolated network so parallel per-platform builds do not clash on ports.
 RUN --network=none <<EOF
     set -eu
 

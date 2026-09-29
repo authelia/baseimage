@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 
+# shellcheck source=/dev/null
+source "$(dirname "${BASH_SOURCE[0]}")/libs/common.sh"
+
 BUILDTAGS=""
 REGISTRIES="docker.io ghcr.io"
 REPOSITORY="authelia/baseimage"
 TAGS=""
 
-if [[ "${BUILDKITE_BRANCH}" =~ ^renovate/ ]]; then
-  TAGS="renovate"
-elif [[ "${BUILDKITE_BRANCH}" != "master" ]] && [[ ! "${BUILDKITE_BRANCH}" =~ .*:.* ]]; then
-  TAGS="${BUILDKITE_BRANCH}"
+if [[ "${BUILDKITE_BRANCH}" != "master" ]] && [[ ! "${BUILDKITE_BRANCH}" =~ .*:.* ]]; then
+  TAGS=$(sanitize_tag "${BUILDKITE_BRANCH}")
 elif [[ "${BUILDKITE_BRANCH}" != "master" ]] && [[ "${BUILDKITE_BRANCH}" =~ .*:.* ]]; then
   TAGS="PR${BUILDKITE_PULL_REQUEST}"
 elif [[ "${BUILDKITE_BRANCH}" == "master" ]] && [[ "${BUILDKITE_PULL_REQUEST}" == "false" ]]; then
