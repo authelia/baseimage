@@ -1,0 +1,66 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommitTypeAll(build)"
+  ],
+  "rebaseWhen": "conflicted",
+  "labels": [
+    "dependencies"
+  ],
+  "enabledManagers": [
+    "custom.regex"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ARG CHISEL_RELEASE=\"(?<currentValue>[^\"]+)\""
+      ],
+      "depNameTemplate": "canonical/chisel",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.+)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ARG SUEXEC_RELEASE=\"(?<currentValue>[^\"]+)\""
+      ],
+      "depNameTemplate": "ncopa/su-exec",
+      "datasourceTemplate": "github-tags",
+      "extractVersionTemplate": "^v(?<version>.+)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ARG BUSYBOX_VERSION=(?<currentValue>\\S+)"
+      ],
+      "depNameTemplate": "busybox",
+      "datasourceTemplate": "custom.ubuntu-devel",
+      "versioningTemplate": "deb",
+      "extractVersionTemplate": "^(?:\\d+:)?(?<version>.+)$"
+    }
+  ],
+  "customDatasources": {
+    "ubuntu-devel": {
+      "description": [
+        "Source package versions published in the release pocket of the current Ubuntu development series.",
+        "The archive's own indexes cannot be used here: Ubuntu publishes only SHA512 checksums in its Release files, while renovate's deb datasource validates them with SHA256."
+      ],
+      "defaultRegistryUrlTemplate": "https://api.launchpad.net/1.0/ubuntu/+archive/primary?ws.op=getPublishedSources&source_name={{packageName}}&exact_match=true&status=Published&distro_series=https://api.launchpad.net/1.0/ubuntu/devel&pocket=Release",
+      "format": "json",
+      "transformTemplates": [
+        "{\"releases\": [entries.{\"version\": source_package_version}]}"
+      ]
+    }
+  }
+}
