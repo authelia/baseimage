@@ -1,8 +1,17 @@
-[logo]: https://www.authelia.com/images/branding/title.png "Authelia"
-[![alt text][logo]](https://www.authelia.com/)
+<p align="center">
+  <img src="https://www.authelia.com/images/authelia-title.png" width="350" title="Authelia">
+</p>
+
+<p align="center">
+  <a href="https://buildkite.com/authelia/baseimage"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/dynamic/json.svg?url=https%3A%2F%2Fimg.shields.io%2Fbuildkite%2F2acff7529b3af230859a7372c0b3d43d135b4186d43a3cf686%2Fmaster.json&query=%24.message&label=build&logo=buildkite&logoColor=%2314cc80&mode=dark&size=sm&variant=outline"><img alt="Build" src="https://shieldcn.dev/badge/dynamic/json.svg?url=https%3A%2F%2Fimg.shields.io%2Fbuildkite%2F2acff7529b3af230859a7372c0b3d43d135b4186d43a3cf686%2Fmaster.json&query=%24.message&label=build&logo=buildkite&logoColor=%2314cc80&mode=light&size=sm&variant=outline"></picture></a>
+  <a href="https://www.apache.org/licenses/LICENSE-2.0"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/github/authelia/baseimage/license.svg?logo=apache&logoColor=%23d22128&mode=dark&size=sm&variant=outline"><img alt="License" src="https://shieldcn.dev/github/authelia/baseimage/license.svg?logo=apache&logoColor=%23d22128&mode=light&size=sm&variant=outline"></picture></a>
+  <a href="https://hub.docker.com/r/authelia/base/tags"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/dynamic/json.svg?url=https%3A%2F%2Fimg.shields.io%2Fdocker%2Fimage-size%2Fauthelia%2Fbase%2Flatest.json&query=%24.message&label=image%20size&logo=docker&logoColor=%232496ed&mode=dark&size=sm&variant=outline"><img alt="Docker Size" src="https://shieldcn.dev/badge/dynamic/json.svg?url=https%3A%2F%2Fimg.shields.io%2Fdocker%2Fimage-size%2Fauthelia%2Fbase%2Flatest.json&query=%24.message&label=image%20size&logo=docker&logoColor=%232496ed&mode=light&size=sm&variant=outline"></picture></a>
+  <a href="https://hub.docker.com/r/authelia/base"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/dynamic/json.svg?url=https%3A%2F%2Fimg.shields.io%2Fdocker%2Fpulls%2Fauthelia%2Fbase.json&query=%24.message&label=pulls&logo=docker&logoColor=%232496ed&mode=dark&size=sm&variant=outline"><img alt="Docker Pulls" src="https://shieldcn.dev/badge/dynamic/json.svg?url=https%3A%2F%2Fimg.shields.io%2Fdocker%2Fpulls%2Fauthelia%2Fbase.json&query=%24.message&label=pulls&logo=docker&logoColor=%232496ed&mode=light&size=sm&variant=outline"></picture></a>
+  <a href="https://discord.authelia.com"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/discord/707844280412012608.svg?logo=discord&logoColor=%235865f2&mode=dark&size=sm&variant=outline"><img alt="Discord" src="https://shieldcn.dev/discord/707844280412012608.svg?logo=discord&logoColor=%235865f2&mode=light&size=sm&variant=outline"></picture></a>
+  <a href="https://matrix.to/#/#support:authelia.com"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/dynamic/json.svg?url=https%3A%2F%2Fimg.shields.io%2Fmatrix%2Fauthelia-support%3Amatrix.org.json&query=%24.message&label=matrix&logo=matrix&mode=dark&size=sm&variant=outline"><img alt="Matrix" src="https://shieldcn.dev/badge/dynamic/json.svg?url=https%3A%2F%2Fimg.shields.io%2Fmatrix%2Fauthelia-support%3Amatrix.org.json&query=%24.message&label=matrix&logo=matrix&mode=light&size=sm&variant=outline"></picture></a>
+</p>
 
 # authelia/base
-[![Docker Pulls](https://img.shields.io/docker/pulls/authelia/base.svg)](https://hub.docker.com/r/authelia/base/) [![Docker Stars](https://img.shields.io/docker/stars/authelia/base.svg)](https://hub.docker.com/r/authelia/base/)
 
 This custom image is based on a `FROM scratch` base with [Chisel](https://github.com/canonical/chisel) to provide glibc components and required packages for Authelia's docker deployment.
 
