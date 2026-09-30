@@ -1,0 +1,90 @@
+---
+pre-commit:
+  piped: true
+  jobs:
+    - name: check tools
+      run: |
+        MISSING=""
+        COUNT=0
+
+        for TOOL in shellcheck typos yamllint zizmor; do
+          if ! command -v ${TOOL} >/dev/null 2>&1; then
+            if [ "$COUNT" -eq 0 ]; then
+              MISSING=${TOOL}
+            elif [ "$COUNT" -eq 1 ]; then
+              MISSING="${MISSING} and ${TOOL}"
+            else
+              MISSING="$(echo "${MISSING}" | sed 's/ and /, /') and ${TOOL}"
+            fi
+            COUNT=$((COUNT + 1))
+          fi
+        done
+
+        if [ ${COUNT} -gt 0 ]; then
+          echo "❌ You must install ${MISSING}"
+          exit 1
+        fi
+
+    - name: linters
+      group:
+        parallel: true
+        jobs:
+          - name: shellcheck
+            run: shellcheck --severity=warning --format=gcc {staged_files} && echo "0 issues."
+            file_types:
+              - text/x-shellscript
+              - text/x-sh
+
+          - name: typos
+            run: typos -w --threads 4 --format brief && echo "0 issues."
+            stage_fixed: true
+
+          - name: yamllint
+            run: yamllint -f parsable . && echo "0 issues."
+            glob: "*.{yml,yaml}"
+
+          - name: zizmor
+            run: zizmor {staged_files} && echo "0 issues."
+            glob: ".github/workflows/*.{yml,yaml}"
+
+commit-msg:
+  jobs:
+    - name: conventional-commits
+      run: |
+        SUBJECT=$(head -n1 "{1}")
+
+        # Skip merge commits and fixup/squash autocommits.
+        case "$SUBJECT" in
+          Merge*|"fixup!"*|"squash!"*) exit 0 ;;
+        esac
+
+        if [ ${#SUBJECT} -gt 72 ]; then
+          echo "❌ Commit subject is ${#SUBJECT} chars, max is 72:"
+          echo "   $SUBJECT"
+          exit 1
+        fi
+
+        LOWER=$(printf '%s' "$SUBJECT" | tr '[:upper:]' '[:lower:]')
+        if [ "$SUBJECT" != "$LOWER" ]; then
+          echo "❌ Commit subject must be all lowercase:"
+          echo "   $SUBJECT"
+          exit 1
+        fi
+
+        TYPES='build|ci|docs|feat|fix|perf|refactor|release|revert|test'
+        # yamllint disable-line rule:line-length
+        SCOPES='amd64|arm64|armv7|buildkite|busybox|chisel|crossbuild|deps|docker|ghcr|github-actions|grype|lefthook|probot|renovate|su-exec|ubuntu'
+
+        if printf '%s' "$SUBJECT" | grep -qE "^(${TYPES})(\((${SCOPES})\))?!?: .+"; then
+          exit 0
+        fi
+
+        echo "❌ Commit subject must follow Conventional Commits:"
+        echo "   <type>[(<scope>)][!]: <description>"
+        echo ""
+        echo "   Types:  ${TYPES}"
+        echo "   Scopes: ${SCOPES}"
+        echo ""
+        echo "   Got: ${SUBJECT}"
+        exit 1
+...
