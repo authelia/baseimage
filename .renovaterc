@@ -9,7 +9,8 @@
     "dependencies"
   ],
   "enabledManagers": [
-    "custom.regex"
+    "custom.regex",
+    "github-actions"
   ],
   "customManagers": [
     {

@@ -34,11 +34,11 @@ This container includes the bare minimum packages for Authelia to function in a 
 * wget
 
 ## Version
-- **30/09/2026:** Update busybox
-- **07/09/2026:** Update busybox and chisel
-- **12/07/2026:** Update chisel
-- **08/04/2026:** Update chisel
-- **06/03/2026:** Update chisel and suexec
+- **30/09/2026:** Update busybox to v1.38.0-3ubuntu3 and chisel to v1.5.1
+- **07/09/2026:** Update busybox to v1.38.0-3ubuntu1 and chisel to v1.5.0
+- **12/07/2026:** Update chisel to v1.4.2
+- **08/04/2026:** Update chisel to v1.4.1
+- **06/03/2026:** Update chisel to v1.4.0 and su-exec to v0.3
 - **02/10/2025:** Cross-compile BusyBox in authelia/crossbuild
 - **28/10/2024:** Swap to musl-static variant of su-exec for multi-arch support
 - **16/10/2024:** Add Provenance and SBOM attestations
