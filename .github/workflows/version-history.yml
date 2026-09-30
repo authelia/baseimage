@@ -1,0 +1,52 @@
+---
+name: Version History
+
+on:
+  push:
+    branches:
+      - 'renovate/**'
+
+permissions: {}
+
+env:
+  TZ: Australia/Melbourne
+
+jobs:
+  record:
+    name: Record Version
+    runs-on: ubuntu-latest
+    if: github.event.head_commit.author.email == '29139614+renovate[bot]@users.noreply.github.com'
+    permissions:
+      contents: write
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1  # v2.21.1
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Record Version
+        id: record
+        env:
+          BASE_REF: origin/${{ github.event.repository.default_branch }}
+        run: .github/scripts/version-history.sh "${BASE_REF}"
+
+      - name: Amend Commit
+        if: steps.record.outputs.changed == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          remote="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}"
+
+          git config user.name 'renovate[bot]'
+          git config user.email '29139614+renovate[bot]@users.noreply.github.com'
+          git add README.md
+          git commit --amend --no-edit
+          git push --force-with-lease="refs/heads/${BRANCH}:${GITHUB_SHA}" "${remote}" "HEAD:refs/heads/${BRANCH}"
+...
