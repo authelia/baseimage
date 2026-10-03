@@ -18,7 +18,7 @@ EOF
 
 FROM --platform=${BUILDPLATFORM} authelia/crossbuild AS crossbuild
 
-ARG BUSYBOX_VERSION=1.38.0-3ubuntu3
+ARG BUSYBOX_VERSION=1.38.0-3ubuntu4
 ARG TARGETARCH
 
 SHELL ["/bin/bash", "-c"]
