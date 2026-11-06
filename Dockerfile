@@ -2,11 +2,13 @@ FROM buildpack-deps:26.04 AS chisel
 
 ARG CHISEL_RELEASE="1.5.1"
 ARG SUEXEC_RELEASE="0.3"
+ARG CHISEL_CACHE_BUST
 ARG TARGETARCH
 
 WORKDIR /root-fs
 
 RUN <<EOF
+    echo "chisel cache bust: ${CHISEL_CACHE_BUST}"
     wget -qO - "https://github.com/canonical/chisel/releases/download/v${CHISEL_RELEASE}/chisel_v${CHISEL_RELEASE}_linux_${TARGETARCH}.tar.gz" | tar -xz --no-same-owner -C /usr/local/bin chisel
 
     chisel cut --release ubuntu-26.04 --root /root-fs \
@@ -57,10 +59,13 @@ EOF
 
 FROM buildpack-deps:26.04 AS final
 
+ARG CHISEL_CACHE_BUST
+
 COPY --link --from=chisel /root-fs /root-fs
 COPY --link --from=crossbuild /root-fs/bin/busybox /root-fs/bin/busybox
 
 RUN <<EOF
+    echo "final cache bust: ${CHISEL_CACHE_BUST}"
     /root-fs/bin/busybox --install /root-fs/bin
 EOF
 

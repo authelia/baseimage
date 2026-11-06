@@ -34,6 +34,7 @@ This container includes the bare minimum packages for Authelia to function in a 
 * wget
 
 ## Version
+- **06/11/2026:** Add cache bust
 - **30/09/2026:** Update busybox to v1.38.0-3ubuntu3 and chisel to v1.5.1
 - **07/09/2026:** Update busybox to v1.38.0-3ubuntu1 and chisel to v1.5.0
 - **12/07/2026:** Update chisel to v1.4.2
