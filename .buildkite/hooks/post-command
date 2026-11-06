@@ -43,6 +43,14 @@ if [[ "${BUILDKITE_LABEL}" == ":docker: Build and Deploy" ]]; then
     done
   fi
 
+  echo "--- :docker: Pruning buildx cache"
+  crossbuilddigest=$(docker buildx imagetools inspect authelia/crossbuild:latest --format '{{json .Manifest}}' | jq -r '.digest // empty')
+  if [[ -n "${crossbuilddigest}" ]]; then
+    docker buildx prune --builder buildx --force --filter "description!=\"pulled from docker.io/authelia/crossbuild:latest@${crossbuilddigest}\""
+  else
+    echo ":warning: Unable to resolve authelia/crossbuild:latest; skipping buildx cache prune." >&2
+  fi
+
   docker logout docker.io
   docker logout ghcr.io
 fi
