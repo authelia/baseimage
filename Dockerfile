@@ -6,6 +6,9 @@ ARG TARGETARCH
 
 WORKDIR /root-fs
 
+ADD https://archive.ubuntu.com/ubuntu/dists/resolute-security/InRelease /tmp/cache-bust/resolute-security.InRelease
+ADD https://archive.ubuntu.com/ubuntu/dists/resolute-updates/InRelease /tmp/cache-bust/resolute-updates.InRelease
+
 RUN <<EOF
     wget -qO - "https://github.com/canonical/chisel/releases/download/v${CHISEL_RELEASE}/chisel_v${CHISEL_RELEASE}_linux_${TARGETARCH}.tar.gz" | tar -xz --no-same-owner -C /usr/local/bin chisel
 
